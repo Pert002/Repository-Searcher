@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import useDebounce from '../../hooks/useDebounce';
 import ReposCard from '../reposCard/repoCard';
-// import { Repo } from '../../entities/repo';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchRepos, clearRepos, incrementPage } from '../../store/slices/reposSlice';
 import { ERROR_CODE_TO_ERROR_MESSAGE } from '../../constans/error';

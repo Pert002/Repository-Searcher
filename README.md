@@ -1,50 +1,76 @@
-# React + TypeScript + Vite
+# GitHub Repository Searcher
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Это веб-приложение, которое позволяет искать репозитории на GitHub по имени пользователя и отображать информацию о найденных репозиториях.  Используется [GitHub Repositories API](https://github.com/fugr-ru/frontend-javascript-test-2#:~:text=GitHub%20Repositories%20API) для получения данных.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Функциональность
 
-## Expanding the ESLint configuration
+*   **Поиск репозиториев:** Позволяет ввести имя пользователя GitHub и найти его репозитории.
+*   **Отображение информации:** Отображает карточки с информацией о каждом репозитории:
+    *   Название репозитория
+    *   Описание (если доступно)
+    *   Ссылка на репозиторий
+    *   Количество звёзд (stars)
+    *   Дата последнего обновления
+*   **Индикатор загрузки:** Показывает индикатор загрузки во время ожидания ответа от GitHub API.
+*   **Пагинация:** Реализована бесконечная прокрутка с шагом 20 репозиториев на страницу. Новые данные загружаются при прокрутке страницы вниз.
+*   **Обработка ошибок:** Отображает понятные сообщения об ошибках, если пользователь вводит некорректное имя пользователя или при возникновении проблем с API.
+*   **Оптимизация запросов:**  Реализована логика, предотвращающая избыточные запросы к API при вводе текста (Debounce).
+*   **Docker контейнер:**  Приложение можно запустить из Docker контейнера.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Технологии
 
-- Configure the top-level `parserOptions` property like this:
+*   **Frontend:** [React, Redux Toolkit]
+*   **HTTP Client:** [Axios]
+*   **Docker:**  Используется для контейнеризации приложения.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Установка и запуск
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+1.  **Клонируйте репозиторий:**
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+    ```bash
+    git clone [URL вашего репозитория]
+    cd [название_вашей_папки_с_проектом]
+    ```
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+2.  **Соберите Docker образ:**
+
+    ```bash
+    docker build -t Future .
+    ```
+
+3.  **Запустите Docker контейнер:**
+
+    ```bash
+    docker run -p [порт_хоста]:80 Future
+    ```
+
+    Например:
+
+    ```bash
+    docker run -p 3000:80 Future
+    ```
+
+## Конфигурация Docker
+
+
+```dockerfile
+FROM node:18-alpine as build
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+FROM nginx:alpine
+
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
