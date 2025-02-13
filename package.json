@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://ваш-username.github.io/название-репозитория",
+  "homepage": "https://pert002.github.io/Repository-Searcher",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
