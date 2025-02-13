@@ -29,8 +29,8 @@
 1.  **Клонируйте репозиторий:**
 
     ```bash
-    git clone [URL вашего репозитория]
-    cd [название_вашей_папки_с_проектом]
+    git clone https://github.com/Pert002/Repository-Searcher.git
+    cd Repository-Searcher
     ```
 
 2.  **Соберите Docker образ:**
@@ -40,12 +40,6 @@
     ```
 
 3.  **Запустите Docker контейнер:**
-
-    ```bash
-    docker run -p [порт_хоста]:80 Future
-    ```
-
-    Например:
 
     ```bash
     docker run -p 3000:80 Future
