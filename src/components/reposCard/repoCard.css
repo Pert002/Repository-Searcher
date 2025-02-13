@@ -1,0 +1,40 @@
+.repo-card {
+    position: relative;
+    background-color: #fff;
+    height: 200px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    font-size: 18px;
+}
+
+.repo-card-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.repo-card-description-empty {
+    font-style: italic;
+}
+
+.repo-card-link {
+    text-decoration: underline;
+}
+
+.repo-card-date {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 14px;
+    
+}
+
+@media (max-width: 576px) {
+    .repo-card {
+        height: 250px;
+    }
+    
+}
+

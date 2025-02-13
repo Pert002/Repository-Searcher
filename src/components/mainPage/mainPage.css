@@ -1,0 +1,76 @@
+.main-page {
+    background-color: #f0f0f0;
+}
+
+.main-page-container {
+    max-width: 1200px;
+    padding: 100px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+.main-page-wrapper {
+    height: 200px;
+    max-width: 1200px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-page-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.main-page-input_wrapper {
+    position: relative;
+    width: 50%;
+}
+
+.main-page-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #000;
+    font-size: 16px;
+    color: #000;
+}
+
+.main-page-input_close {
+    position: absolute;
+    content: '';
+    right: 10px;
+    top: 13px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background: url('../../../public/close-cross.svg') no-repeat center center;
+    background-size: contain;
+}
+
+.repos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.main-page-error {
+    color: red;
+    font-size: 22px;
+    font-weight: 600;
+    margin-top: 50px;
+    text-align: center;
+}
+
+@media (max-width: 1200px) {
+    .repos-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
