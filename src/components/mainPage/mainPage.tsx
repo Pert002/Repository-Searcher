@@ -12,21 +12,20 @@ const MainPage = () => {
     const debouncedUser = useDebounce(user, 1000);
 
     const dispatch = useAppDispatch();
-    const { repos, isLoading, error, endCursor, hasMorePages } = useAppSelector(state => state.repos);
+    const { repos, isLoading, error, endCursor, hasNextPage } = useAppSelector(state => state.repos);
 
     const observer = useRef<IntersectionObserver | null>(null);
 
     const loadingTriggerRef = useRef<HTMLDivElement>(null);
 
     const handleLoadMore = useCallback(() => {
-        if (!isLoading && hasMorePages && debouncedUser) {
+        if (!isLoading && hasNextPage && debouncedUser) {
             dispatch(fetchRepos({
                 userName: debouncedUser,
                 cursor: endCursor,
             }));
         }
-    }, [isLoading, hasMorePages, debouncedUser, endCursor, dispatch]);
-
+    }, [isLoading, hasNextPage, debouncedUser, endCursor, dispatch]);
     useEffect(() => {
 
         if (observer.current) {
@@ -34,7 +33,7 @@ const MainPage = () => {
         }
 
         observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMorePages && !isLoading) {
+            if (entries[0].isIntersecting && hasNextPage && !isLoading) {
                 handleLoadMore();
             }
         }, {
@@ -52,7 +51,7 @@ const MainPage = () => {
                 observer.current.disconnect();
             }
         };
-    }, [hasMorePages, isLoading, handleLoadMore]);
+    }, [hasNextPage, isLoading, handleLoadMore]);
 
     useEffect(() => {
         if (debouncedUser.length === 0) {
