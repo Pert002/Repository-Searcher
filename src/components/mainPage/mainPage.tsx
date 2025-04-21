@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import useDebounce from '../../hooks/useDebounce';
 import ReposCard from '../reposCard/repoCard';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { fetchRepos, clearRepos, incrementPage } from '../../store/slices/reposSlice';
+import { fetchRepos, clearRepos } from '../../store/slices/reposSlice';
 import { ERROR_CODE_TO_ERROR_MESSAGE } from '../../constans/error';
 import './mainPage.css';
 import './loader.css';
@@ -12,7 +12,7 @@ const MainPage = () => {
     const debouncedUser = useDebounce(user, 1000);
 
     const dispatch = useAppDispatch();
-    const { repos, isLoading, error, currentPage, hasMorePages } = useAppSelector(state => state.repos);
+    const { repos, isLoading, error, endCursor, hasMorePages } = useAppSelector(state => state.repos);
 
     const observer = useRef<IntersectionObserver | null>(null);
 
@@ -20,13 +20,12 @@ const MainPage = () => {
 
     const handleLoadMore = useCallback(() => {
         if (!isLoading && hasMorePages && debouncedUser) {
-            dispatch(incrementPage());
             dispatch(fetchRepos({
                 userName: debouncedUser,
-                page: currentPage + 1
+                cursor: endCursor,
             }));
         }
-    }, [isLoading, hasMorePages, debouncedUser, currentPage, dispatch]);
+    }, [isLoading, hasMorePages, debouncedUser, endCursor, dispatch]);
 
     useEffect(() => {
 
@@ -60,7 +59,7 @@ const MainPage = () => {
             dispatch(clearRepos());
             return;
         }
-        dispatch(fetchRepos({ userName: debouncedUser, page: 1 }));
+        dispatch(fetchRepos({ userName: debouncedUser }));
     }, [debouncedUser, dispatch]);
 
     const handleChangeUser = (e: React.ChangeEvent<HTMLInputElement>) => {
