@@ -7,7 +7,7 @@ interface ReposState {
   isLoading: boolean;
   error: number | null;
   endCursor: string | null;
-  hasMorePages: boolean;
+  hasNextPage: boolean;
 }
 
 const initialState: ReposState = {
@@ -15,13 +15,13 @@ const initialState: ReposState = {
   isLoading: false,
   error: null,
   endCursor: null,
-  hasMorePages: true,
+  hasNextPage: true,
 };
 
 export const fetchRepos = createAsyncThunk(
   "repos/fetchRepos",
   async (
-    { userName, cursor }: { userName: string; cursor?: string },
+    { userName, cursor }: { userName: string; cursor?: string | null },
     { rejectWithValue }
   ) => {
     try {
@@ -30,7 +30,7 @@ export const fetchRepos = createAsyncThunk(
                     user(login: $userName) {
                         repositories(first: $perPage, after: $cursor) {
                             pageInfo {
-                                hasMorePages
+                                hasNextPage
                                 endCursor
                             }
                             edges {
@@ -57,10 +57,12 @@ export const fetchRepos = createAsyncThunk(
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Authorization: `Bearer ${process.env.REACT_APP_GITHUB_TOKEN}`,
+          Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}`,
         },
         body: JSON.stringify({ query, variables }),
       });
+
+      console.log(query, variables, response);
 
       const data = await response.json();
 
@@ -83,7 +85,7 @@ export const fetchRepos = createAsyncThunk(
 
       return {
         repos,
-        hasMorePages: reposData.pageInfo.hasMorePages,
+        hasNextPage: reposData.pageInfo.hasNextPage,
         endCursor: reposData.pageInfo.endCursor,
       };
     } catch (error: any) {
@@ -103,7 +105,7 @@ const reposSlice = createSlice({
       state.repos = [];
       state.error = null;
       state.endCursor = null;
-      state.hasMorePages = true;
+      state.hasNextPage = true;
     },
   },
   extraReducers: (builder) => {
@@ -120,7 +122,7 @@ const reposSlice = createSlice({
         }
         state.isLoading = false;
         state.error = null;
-        state.hasMorePages = action.payload.hasMorePages;
+        state.hasNextPage = action.payload.hasNextPage;
         state.endCursor = action.payload.endCursor;
       })
       .addCase(fetchRepos.rejected, (state, action) => {
