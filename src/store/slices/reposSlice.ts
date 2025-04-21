@@ -26,21 +26,18 @@ export const fetchRepos = createAsyncThunk(
   ) => {
     try {
       const query = `
-                query ($userName: String!, $perPage: Int!, $cursor: String) {
-                    user(login: $userName) {
-                        repositories(first: $perPage, after: $cursor) {
-                            pageInfo {
-                                hasNextPage
-                                endCursor
+                query ($login: String!, $perPage: Int!, $cursor: String) {
+                    repositoryOwner(login: $login) {
+                        ... on User {
+                            repositories(first: $perPage, after: $cursor) {
+                                pageInfo { hasNextPage endCursor }
+                                edges { node { id name description stargazerCount url } }
                             }
-                            edges {
-                                node {
-                                    id
-                                    name
-                                    description
-                                    stargazerCount
-                                    url
-                                }
+                        }
+                        ... on Organization {
+                            repositories(first: $perPage, after: $cursor) {
+                                pageInfo { hasNextPage endCursor }
+                                edges { node { id name description stargazerCount url } }
                             }
                         }
                     }
@@ -48,7 +45,7 @@ export const fetchRepos = createAsyncThunk(
             `;
 
       const variables = {
-        userName,
+        login: userName,
         perPage: 20,
         cursor,
       };
@@ -62,19 +59,18 @@ export const fetchRepos = createAsyncThunk(
         body: JSON.stringify({ query, variables }),
       });
 
-      console.log(query, variables, response);
-
       const data = await response.json();
 
       if (data.errors) {
         return rejectWithValue(404);
       }
 
-      if (!data.data.user) {
+      const ownerData = data.data.repositoryOwner;
+      if (!ownerData) {
         return rejectWithValue(404);
       }
 
-      const reposData = data.data.user.repositories;
+      const reposData = ownerData.repositories;
       const repos = reposData.edges.map((edge: any) => ({
         id: edge.node.id,
         name: edge.node.name,
